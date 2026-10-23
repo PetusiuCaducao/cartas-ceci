@@ -51,7 +51,7 @@ window.CARTAS = [
     id: "jimena",
     nombre: "Jimena",
     firma: "Te quiere, Jimena M.",
-    fotos: 1,
+    fotos: 7,
     texto: [
       "Se dice por ahí que, cuando alguien está tan presente en tu vida, se acaba colando en historias o momentos que ni siquiera tienen que ver con ella. Siempre me ha hecho ilusión que nos acordemos de la otra hasta en los sitios más inesperados de la vida, dícese una redacción del cole, o una anécdota que cuento en un grupo de amigos, que puede que ni siquiera te conozca.",
       "Me gusta mucho rezar. Rezar por las cosas. Rezar por la gente. Por los cercanos, y por los que no lo son (aunque siempre una tira para casa…). Tú eres alegría pura. De esas personas con las que la vida parece un poco más ligera. Rezo mucho para que Dios te cuide. Cuide que seas tan risueña y tan inocente!!!!!! Rezo para que cuide ese don que tienes, precisamente de cuidar. Porque aunque no siempre tengas para ti (o no quieras tenerlo), estás pendiente de que todo a tu alrededor esté bien. Rezo porque sigas siendo capaz de ayudar y dar tanto de ti a los demás. Pero pido también para que no cargues contigo todo el peso.",
