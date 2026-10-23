@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cartas para Ceci</title>
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Postales de cumpleaños para Ceci, de la gente que la quiere.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='3' y='7' width='26' height='18' rx='2' fill='%23ffffff' stroke='%233b7fc0' stroke-width='2'/%3E%3Cpath d='M4 8l12 9 12-9' fill='none' stroke='%233b7fc0' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Young+Serif&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cielo: #8ec5ec;
+      --cielo-claro: #d4e9f9;
+      --cielo-hondo: #3b7fc0;
+      --azul-noche: #1b4a7a;
+      --bruma: #eef5fb;
+      --papel: #fdfdfb;
+      --tinta: #16314c;
+      --tinta-suave: #4f6d8b;
+      --linea: rgb(22 49 76 / .13);
+      --sombra: 22 49 76;
+      --display: "Young Serif", Georgia, serif;
+      --texto: "Newsreader", Georgia, serif;
+      --mono: "IBM Plex Mono", monospace;
+      --salir: cubic-bezier(.23, 1, .32, 1);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--tinta);
+      font-family: var(--texto);
+      background: radial-gradient(120% 70% at 50% 0%, #b4dbf6 0, var(--bruma) 70%) no-repeat, var(--bruma);
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    button { font: inherit; color: inherit; }
+    :focus-visible { outline: 3px solid var(--cielo-hondo); outline-offset: 3px; border-radius: 8px; }
+
+    .cab { text-align: center; padding: clamp(28px, 6vh, 56px) 16px clamp(18px, 3vh, 28px); }
+    .cab h1 { margin: 0; font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 6vw, 3.4rem); line-height: 1; letter-spacing: -.02em; }
+    .cab p { margin: 10px auto 0; max-width: 30em; font-style: italic; color: var(--tinta-suave); }
+
+    .mesa { display: grid; justify-items: center; padding: 0 16px 48px; }
+
+    /* ---------- Mazo ---------- */
+    .mazo {
+      position: relative;
+      /* Cabe en pantalla junto a la cabecera y los mandos */
+      width: min(92vw, 820px, calc((100dvh - 300px) * 1.5));
+      aspect-ratio: 3 / 2;
+      perspective: 1600px;
+    }
+    @media (max-width: 640px) { .mazo { width: min(92vw, calc((100dvh - 330px) * 3 / 4.3)); min-width: 260px; aspect-ratio: 3 / 4.3; } }
+
+    .debajo {
+      position: absolute;
+      inset: 0;
+      border-radius: 10px;
+      background: var(--papel) center / cover;
+      box-shadow: 0 1px 2px rgb(var(--sombra) / .1), 0 16px 30px -22px rgb(var(--sombra) / .5);
+    }
+    .debajo--1 { transform: rotate(-3.2deg) translate(-6px, 8px); }
+    .debajo--2 { transform: rotate(2.6deg) translate(8px, 12px); }
+    .debajo::after { content: ""; position: absolute; inset: 0; border-radius: inherit; background: rgb(238 245 251 / .35); }
+
+    .postal {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      cursor: grab;
+      touch-action: pan-y;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .postal.arrastrando { cursor: grabbing; }
+    .postal.vuela { transition: transform 260ms var(--salir), opacity 260ms var(--salir); }
+    .postal.entra { animation: posar 240ms var(--salir); }
+    @keyframes posar { from { transform: scale(.95) translateY(10px); opacity: .4; } }
+
+    .giro {
+      position: absolute;
+      inset: 0;
+      transform-style: preserve-3d;
+      transition: transform 420ms var(--salir);
+    }
+    .postal.girada .giro { transform: rotateY(180deg); }
+    .cara {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 10px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      background: var(--papel);
+      box-shadow: 0 1px 2px rgb(var(--sombra) / .12), 0 30px 50px -30px rgb(var(--sombra) / .6);
+    }
+    .dorso { transform: rotateY(180deg); }
+
+    /* Anverso: la foto */
+    .anverso img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; background: var(--cielo-claro); }
+    /* Foto entera sobre un fondo desenfocado de sí misma, cuando el recorte cortaría caras */
+    .anverso .borroso { position: absolute; inset: -30px; background: center / cover; filter: blur(26px) brightness(.82) saturate(1.1); }
+    .anverso img.entera { position: relative; object-fit: contain; background: none; }
+    .anverso .vacio { width: 100%; height: 100%; display: grid; place-items: center; font-family: var(--display); font-size: 6rem; color: var(--cielo-hondo); background: var(--cielo-claro); }
+    .banda {
+      position: absolute;
+      left: 14px;
+      bottom: 14px;
+      padding: 12px 18px 12px 16px;
+      border-radius: 8px;
+      background: rgb(253 253 251 / .94);
+      box-shadow: 0 8px 20px -12px rgb(var(--sombra) / .6);
+    }
+    .banda small { display: block; font-style: italic; color: var(--tinta-suave); }
+    .banda b { font-family: var(--display); font-weight: 400; font-size: clamp(1.7rem, 4.4vw, 2.4rem); line-height: 1; }
+    .voltea {
+      position: absolute;
+      right: 14px;
+      bottom: 14px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgb(22 49 76 / .55);
+      color: #fff;
+      font-size: .92rem;
+      backdrop-filter: blur(6px);
+    }
+
+    /* Reverso: la carta en formato postal */
+    .dorso { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+    .dorso__texto { overflow-y: auto; overscroll-behavior: contain; padding: clamp(20px, 3.4vw, 34px); border-right: 1px solid var(--linea); scrollbar-width: thin; }
+    .dorso__texto p { margin: 0 0 .9em; font-size: clamp(1rem, 1.7vw, 1.12rem); line-height: 1.62; white-space: pre-line; text-wrap: pretty; }
+    .dorso__texto .firma { font-style: italic; font-size: 1.25rem; color: var(--cielo-hondo); text-align: right; }
+    .dorso__texto .posdata { padding-top: .8em; border-top: 1px dashed var(--linea); font-style: italic; color: var(--tinta-suave); }
+    .dorso__lado { position: relative; display: flex; flex-direction: column; gap: 18px; padding: clamp(18px, 3vw, 30px); }
+    .sello {
+      align-self: flex-end;
+      width: 76px;
+      height: 92px;
+      padding: 5px;
+      background: #fff;
+      rotate: 3deg;
+      --diente: linear-gradient(#000 0 0) center / calc(100% - 6px) calc(100% - 6px) no-repeat, radial-gradient(circle, #0000 2.6px, #000 3px) -4px -4px / 8px 8px;
+      -webkit-mask: var(--diente);
+      mask: var(--diente);
+      filter: drop-shadow(0 0 .5px rgb(var(--sombra) / .5));
+    }
+    .sello img { width: 100%; height: 100%; object-fit: cover; }
+    .matasellos { position: absolute; top: 22px; right: 70px; width: 110px; color: var(--cielo-hondo); opacity: .75; }
+    .direccion { margin-top: 8px; }
+    .direccion span { display: block; padding: 8px 0 4px; border-bottom: 1px solid var(--linea); font-style: italic; }
+    .direccion span:first-child { font-family: var(--display); font-style: normal; font-size: 1.4rem; }
+    .mas { margin-top: auto; }
+    .mas small { display: block; margin-bottom: 8px; font-style: italic; color: var(--tinta-suave); }
+    .mas div { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mas button { width: 52px; height: 52px; padding: 0; border: 0; border-radius: 6px; overflow: hidden; cursor: zoom-in; transition: transform 150ms var(--salir); }
+    .mas button:hover { transform: translateY(-2px); }
+    .mas button:active { transform: scale(.96); }
+    .mas img { width: 100%; height: 100%; object-fit: cover; }
+
+    @media (max-width: 640px) {
+      .dorso { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto; }
+      .dorso__lado { display: contents; }
+      .sello { position: absolute; top: 14px; right: 14px; width: 54px; height: 66px; }
+      .matasellos { top: 16px; right: 50px; width: 88px; }
+      .direccion { grid-row: 1; margin: 0; padding: 18px 120px 6px 20px; }
+      .direccion span:last-child { display: none; }
+      .dorso__texto { grid-row: 2; border-right: 0; padding-top: 12px; }
+      .mas { grid-row: 3; padding: 10px 20px 16px; border-top: 1px solid var(--linea); }
+      .mas button { width: 44px; height: 44px; }
+    }
+
+    /* ---------- Mandos ---------- */
+    .mandos { display: flex; align-items: center; gap: 10px; margin-top: clamp(22px, 4vh, 36px); }
+    .mandos button {
+      height: 46px;
+      padding: 0 18px;
+      border: 1px solid var(--linea);
+      border-radius: 999px;
+      background: var(--papel);
+      cursor: pointer;
+      transition: background 150ms, transform 150ms var(--salir);
+    }
+    .mandos button:hover { background: #fff; }
+    .mandos button:active { transform: scale(.97); }
+    .mandos .principal { background: var(--cielo-hondo); border-color: var(--cielo-hondo); color: #fff; }
+    .mandos .principal:hover { background: #3474b0; }
+    .mandos .cuenta { min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; color: var(--tinta-suave); font-style: italic; }
+
+    .carril { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 760px; margin-top: 22px; }
+    .carril button { padding: 6px 12px; border: 0; border-radius: 999px; background: transparent; color: var(--tinta-suave); cursor: pointer; transition: background 150ms, color 150ms; }
+    .carril button:hover { background: rgb(255 255 255 / .7); color: var(--tinta); }
+    .carril button[aria-current] { background: var(--tinta); color: #fff; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="cab">
+    <h1>Postales para Ceci</h1>
+    <p>Desliza la postal a un lado para pasar a la siguiente. Tócala para darle la vuelta y leer lo que pone detrás.</p>
+  </header>
+
+  <main class="mesa">
+    <div class="mazo" id="mazo">
+      <div class="debajo debajo--2" id="debajo2"></div>
+      <div class="debajo debajo--1" id="debajo1"></div>
+      <div class="postal" id="postal" tabindex="0" role="group" aria-roledescription="postal"></div>
+    </div>
+    <div class="mandos">
+      <button data-m="ant" aria-label="Postal anterior">←</button>
+      <button class="principal" data-m="voltear" id="voltear">Dar la vuelta</button>
+      <button data-m="sig" aria-label="Postal siguiente">→</button>
+      <span class="cuenta" id="cuenta" aria-live="polite"></span>
+    </div>
+    <nav class="carril" id="carril" aria-label="Ir a una postal"></nav>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="comun.js"></script>
+  <script>
+    (() => {
+      const { cartas, rutaFoto, fotosDe, textoFotos, escapar, parrafos, abrirVisor, buscar } = Comun;
+      const $ = (id) => document.getElementById(id);
+      const postal = $("postal");
+
+      // Encuadre de la foto de portada. "entera": se ve completa (las caras no caben en un recorte apaisado).
+      // Cualquier otro valor es un object-position para mover el recorte.
+      const ENCUADRES = {
+        martita: "entera",
+        segoviaali: "50% 14%",
+      };
+      const anverso = (c, src) => {
+        const alt = `${escapar(c.nombre)} con Ceci`;
+        const enc = ENCUADRES[c.id];
+        if (enc === "entera") {
+          return `<div class="borroso" style="background-image:url('${src}')"></div><img class="entera" src="${src}" alt="${alt}" draggable="false">`;
+        }
+        return `<img src="${src}" alt="${alt}" draggable="false"${enc ? ` style="object-position:${enc}"` : ""}>`;
+      };
+      let i = Math.max(0, cartas.findIndex((c) => c.id === location.hash.slice(1)));
+      let ocupado = false;
+
+      const matasellos = `
+        <svg class="matasellos" viewBox="0 0 132 70" aria-hidden="true">
+          <defs><path id="aro" d="M 70 35 a 26 26 0 1 1 52 0 a 26 26 0 1 1 -52 0"/></defs>
+          <circle cx="96" cy="35" r="31" fill="none" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="96" cy="35" r="20" fill="none" stroke="currentColor" stroke-width="1"/>
+          <text font-family="IBM Plex Mono, monospace" font-size="7.2" letter-spacing="1.2" fill="currentColor"><textPath href="#aro">FELIZ CUMPLE · CECI · 2026 ·</textPath></text>
+          <path d="M2 22 q6 -5 12 0 t12 0 t12 0 t12 0 t12 0M2 35 q6 -5 12 0 t12 0 t12 0 t12 0 t12 0M2 48 q6 -5 12 0 t12 0 t12 0 t12 0 t12 0" fill="none" stroke="currentColor" stroke-width="1.3"/>
+        </svg>`;
+
+      $("carril").innerHTML = cartas.map((c, k) => `<button data-k="${k}">${escapar(c.nombre)}</button>`).join("");
+
+      function pintar() {
+        const c = cartas[i];
+        const fotos = fotosDe(c);
+        postal.className = "postal";
+        postal.setAttribute("aria-label", `Postal de ${c.nombre}`);
+        postal.innerHTML = `
+          <div class="giro">
+            <div class="cara anverso">
+              ${fotos[0] ? anverso(c, fotos[0]) : `<div class="vacio">${escapar(c.nombre[0])}</div>`}
+              <div class="banda"><small>de</small><b>${escapar(c.nombre)}</b></div>
+              <span class="voltea" aria-hidden="true">Toca para leer ↻</span>
+            </div>
+            <div class="cara dorso" aria-hidden="true">
+              <div class="dorso__texto">
+                ${parrafos(c)}
+                ${c.firma ? `<p class="firma">${escapar(c.firma)}</p>` : ""}
+                ${c.posdata ? `<p class="posdata">${escapar(c.posdata)}</p>` : ""}
+              </div>
+              <div class="dorso__lado">
+                <span class="sello">${fotos[0] ? `<img src="${fotos[0]}" alt="" draggable="false">` : ""}</span>
+                ${matasellos}
+                <div class="direccion"><span>Para Ceci</span><span>Allí donde esté</span><span>De parte de ${escapar(c.nombre)}</span></div>
+                ${fotos.length ? `
+                  <div class="mas">
+                    <small>${textoFotos(fotos.length)}</small>
+                    <div>${fotos.map((src, k) => `<button data-foto="${k}" aria-label="Ampliar foto ${k + 1}"><img src="${src}" alt="" draggable="false" loading="lazy"></button>`).join("")}</div>
+                  </div>` : ""}
+              </div>
+            </div>
+          </div>`;
+        const fondo = (n, el) => {
+          const d = cartas[(i + n) % cartas.length];
+          el.style.backgroundImage = d.fotos ? `url('${rutaFoto(d, 1)}')` : "none";
+        };
+        fondo(1, $("debajo1"));
+        fondo(2, $("debajo2"));
+        $("cuenta").textContent = `${i + 1} de ${cartas.length}`;
+        $("voltear").textContent = "Dar la vuelta";
+        document.querySelectorAll("#carril button").forEach((b) => {
+          if (Number(b.dataset.k) === i) b.setAttribute("aria-current", "true");
+          else b.removeAttribute("aria-current");
+        });
+        history.replaceState(null, "", `#${c.id}`);
+        document.title = `Postal de ${c.nombre} · Cartas para Ceci`;
+      }
+
+      function voltear() {
+        const girada = postal.classList.toggle("girada");
+        postal.querySelector(".dorso").setAttribute("aria-hidden", String(!girada));
+        postal.querySelector(".anverso").setAttribute("aria-hidden", String(girada));
+        $("voltear").textContent = girada ? "Ver la foto" : "Dar la vuelta";
+      }
+
+      // Lanza la postal hacia un lado y posa la siguiente
+      function ir(destino, dir) {
+        if (ocupado || destino === i) return;
+        ocupado = true;
+        const reducir = matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const cambiar = () => {
+          i = (destino + cartas.length) % cartas.length;
+          postal.classList.remove("vuela");
+          postal.style.transform = "";
+          postal.style.opacity = "";
+          pintar();
+          postal.classList.add("entra");
+          postal.addEventListener("animationend", () => postal.classList.remove("entra"), { once: true });
+          ocupado = false;
+        };
+        if (reducir) return cambiar();
+        postal.classList.add("vuela");
+        postal.style.transform = `translateX(${dir * 115}%) rotate(${dir * 14}deg)`;
+        postal.style.opacity = "0";
+        setTimeout(cambiar, 260);
+      }
+      const siguiente = () => ir(i + 1, -1);
+      const anterior = () => ir(i - 1, 1);
+
+      // Arrastrar con el dedo o el ratón
+      let inicio = null, dx = 0, movido = false;
+      postal.addEventListener("pointerdown", (e) => {
+        if (e.target.closest("[data-foto], .dorso__texto") && postal.classList.contains("girada")) return;
+        inicio = e.clientX; dx = 0; movido = false;
+        postal.setPointerCapture(e.pointerId);
+        postal.classList.add("arrastrando");
+      });
+      postal.addEventListener("pointermove", (e) => {
+        if (inicio === null) return;
+        dx = e.clientX - inicio;
+        if (Math.abs(dx) > 6) movido = true;
+        if (movido) postal.style.transform = `translateX(${dx}px) rotate(${dx / 22}deg)`;
+      });
+      const soltar = () => {
+        if (inicio === null) return;
+        inicio = null;
+        postal.classList.remove("arrastrando");
+        if (Math.abs(dx) > 110) return dx < 0 ? siguiente() : anterior();
+        postal.classList.add("vuela");
+        postal.style.transform = "";
+        setTimeout(() => postal.classList.remove("vuela"), 260);
+        if (!movido) voltear();
+      };
+      postal.addEventListener("pointerup", soltar);
+      postal.addEventListener("pointercancel", soltar);
+
+      document.addEventListener("click", (e) => {
+        const f = e.target.closest("[data-foto]");
+        if (f) { e.stopPropagation(); return abrirVisor(cartas[i], Number(f.dataset.foto)); }
+        const m = e.target.closest("[data-m]")?.dataset.m;
+        if (m === "sig") siguiente();
+        if (m === "ant") anterior();
+        if (m === "voltear") voltear();
+        const k = e.target.closest("#carril button")?.dataset.k;
+        if (k !== undefined) ir(Number(k), Number(k) > i ? -1 : 1);
+      });
+      document.addEventListener("keydown", (e) => {
+        if (document.querySelector(".visor[open]")) return;
+        if (e.key === "ArrowRight") { e.preventDefault(); siguiente(); }
+        if (e.key === "ArrowLeft") { e.preventDefault(); anterior(); }
+        if ((e.key === "Enter" || e.key === " ") && document.activeElement === postal) { e.preventDefault(); voltear(); }
+      });
+      addEventListener("hashchange", () => {
+        const k = cartas.findIndex((c) => c.id === location.hash.slice(1));
+        if (k >= 0 && k !== i) ir(k, k > i ? -1 : 1);
+      });
+
+      pintar();
+    })();
+  </script>
+</body>
+</html>

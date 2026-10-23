@@ -1,0 +1,7 @@
+# Solo se publica la web; los originales (zips, PDF, fotos de WhatsApp) se quedan en local.
+/*
+!/.gitignore
+!/index.html
+!/comun.js
+!/data.js
+!/fotos/
